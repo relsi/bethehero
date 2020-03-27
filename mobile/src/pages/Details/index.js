@@ -9,7 +9,10 @@ import style from "./style";
 export default function Detail() {
 
     const navigation = useNavigation();
-    const message = 'Olá, APAE. Gostaria de contribuir com o caso da cadelinhas atropelada com R$ 120,00';
+    const route = useRoute();
+    const incident = route.params.incident;
+    const valor = Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL', }).format(incident.value);
+    const message = `Olá, ${incident.name}. Gostaria de contribuir com o caso ${incident.title} com ${valor}`;
 
     function navigateBack() {
         navigation.goBack();
@@ -17,15 +20,14 @@ export default function Detail() {
 
     function sendMail() {
         MailCompose.composeAsync({
-            subject: 'Herói do caso cadela atropelada',
-            recipients: ['testeenvio@gmail.com'],
+            subject: `Herói do caso: ${incident.title}`,
+            recipients: [incident.email],
             body: message
-
         })
     }
 
     function sendWhatsApp() {
-        Linking.openURL(`whatsapp://send?phone=51123456789&text=${message}`)
+        Linking.openURL(`whatsapp://send?phone=${incident.whatsapp}&text=${message}`)
     }
 
     return (
@@ -43,13 +45,13 @@ export default function Detail() {
 
             <View style={style.incident}>
                 <Text style={[style.incidentProperty, {marginTop:0}]}>ONG:</Text>
-                <Text style={style.incidentValue}>APAE</Text>
+                <Text style={style.incidentValue}>{incident.name} de {incident.city}/{incident.uf}</Text>
 
                 <Text style={style.incidentProperty}>CASO:</Text>
-                <Text style={style.incidentValue}>Cachorro Atropelado</Text>
+                <Text style={style.incidentValue}>{incident.title}</Text>
 
                 <Text style={style.incidentProperty}>VALOR:</Text>
-                <Text style={style.incidentValue}>R$ 100 Reais</Text>  
+                <Text style={style.incidentValue}>{valor}</Text>  
             </View>
 
             <View style={style.contactBox}>
