@@ -4,10 +4,13 @@ const connection = require('../../src/database/connection');
 
 describe('ONG', () => {
 
+    //reinicializa o banco e faz um nova migração
     beforeEach(async () => {
+        await connection.migrate.rollback();
         await connection.migrate.latest();
     });
 
+    //destroi a conexão do banco pra não emitir warning
     afterAll(async () => {
         await connection.destroy();
     });
@@ -25,6 +28,5 @@ describe('ONG', () => {
 
         expect(response.body).toHaveProperty('id');
         expect(response.body.id).toHaveLength(8);
-
     });
 });
